@@ -122,23 +122,69 @@ export default function RouteDetailsScreen() {
                     </View>
                 </ScrollView>
 
-                {/* Bottom Save Journey Button */}
-                <View className="pb-8 pt-4 bg-white border-t border-slate-50">
+                {/* Bottom Action Buttons (Save and Book Now) */}
+                <View className="pb-8 pt-4 bg-white border-t border-slate-50 flex-row gap-4">
                     <TouchableOpacity
                         onPress={handleSaveJourney}
                         disabled={isSaving}
-                        className={`w-full py-4 rounded-2xl items-center justify-center flex-row border ${isSaving ? 'bg-slate-50 border-slate-100' : 'bg-slate-50 border-[#003580]'}`}
+                        className={`flex-1 py-4 rounded-2xl items-center shadow-md flex-row justify-center border ${isSaving ? 'bg-slate-50 border-slate-100' : 'bg-slate-50 border-[#003580]'}`}
                     >
                         {isSaving ? (
                             <ActivityIndicator size="small" color="#003580" />
                         ) : (
                             <>
                                 <Ionicons name="heart-outline" size={20} color="#003580" />
-                                <Text className="text-[#003580] font-[Outfit-Bold] text-lg ml-2">Save Journey</Text>
+                                <Text className="text-[#003580] font-[Outfit-Bold] text-lg ml-2">Save</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={handleBookNow}
+                        disabled={isBooking}
+                        className={`flex-1 py-4 rounded-2xl items-center shadow-lg flex-row justify-center ${isBooking ? 'bg-slate-400' : 'bg-[#003580] shadow-[#003580]/30'}`}
+                    >
+                        {isBooking ? (
+                            <ActivityIndicator size="small" color="white" />
+                        ) : (
+                            <>
+                                <Text className="text-white font-[Outfit-Bold] text-lg">Book Now</Text>
+                                <Ionicons name="arrow-forward" size={20} color="white" />
                             </>
                         )}
                     </TouchableOpacity>
                 </View>
+
+                {/* Reusable Passenger Details Modal Form */}
+                <PassengerDetailsModal
+                    visible={showDetailsForm}
+                    onClose={() => setShowDetailsForm(false)}
+                    passengerName={passengerName}
+                    setPassengerName={setPassengerName}
+                    passengerPhone={passengerPhone}
+                    setPassengerPhone={setPassengerPhone}
+                    seatPreference={seatPreference}
+                    setSeatPreference={setSeatPreference}
+                    mealPreference={mealPreference}
+                    setMealPreference={setMealPreference}
+                    specialAssistance={specialAssistance}
+                    setSpecialAssistance={setSpecialAssistance}
+                    specialAssistanceType={specialAssistanceType}
+                    setSpecialAssistanceType={setSpecialAssistanceType}
+                    specialAssistanceEquipment={specialAssistanceEquipment}
+                    setSpecialAssistanceEquipment={setSpecialAssistanceEquipment}
+                    emergencyContactName={emergencyContactName}
+                    setEmergencyContactName={setEmergencyContactName}
+                    emergencyContactPhone={emergencyContactPhone}
+                    setEmergencyContactPhone={setEmergencyContactPhone}
+                    hasInsurance={hasInsurance}
+                    setHasInsurance={setHasInsurance}
+                    luggageCount={luggageCount}
+                    setLuggageCount={setLuggageCount}
+                    onSubmit={handleBookNow}
+                    isSubmitting={isBooking}
+                    routeDetailsText={`${route.operator || route.type || 'Travel'} – ${route.from} to ${route.to}`}
+                />
             </View>
         );
     }

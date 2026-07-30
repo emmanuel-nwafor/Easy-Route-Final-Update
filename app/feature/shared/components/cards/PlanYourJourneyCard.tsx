@@ -9,7 +9,6 @@ import {
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useRouter } from "expo-router";
 
-// Import our custom modals
 import LocationSelectionModal from "../modals/LocationModal";
 import { DatePickerModal, TravellerModal, TransportModal } from "../modals/SelectionModals";
 import { useLocation } from "../../hooks/useLocation";
@@ -18,18 +17,15 @@ export default function PlanYourJourneyCard() {
     const router = useRouter();
     const { getLocation, isLoading: isLocating } = useLocation();
 
-    // -- State --
     const [from, setFrom] = useState('Current Location');
     const [to, setTo] = useState('');
     const [date, setDate] = useState('Dec 15, 2025');
     const [travellers, setTravellers] = useState({ adults: 1, children: 0 });
     const [transport, setTransport] = useState('Flight');
 
-    // -- Modal Visibility --
     const [modal, setModal] = useState<'from' | 'to' | 'date' | 'travellers' | 'transport' | null>(null);
 
     const handleSearch = () => {
-        // Build query params or navigate to plan screen with pre-filled state
         router.push({
             pathname: '/feature/search/screens/all-search',
             params: { from, to, date, transport, adults: travellers.adults, children: travellers.children }

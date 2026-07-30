@@ -101,21 +101,7 @@ export function useRouteDetails(routesStr: string) {
             });
             toast.show('Booking confirmed! 🎉', { type: 'success' });
             setShowDetailsForm(false);
-            router.push({
-                pathname: '/feature/search/screens/booking-details',
-                params: {
-                    id: booking._id || booking.id,
-                    type: booking.vehicleType || route.type,
-                    operator: booking.operator || route.operator,
-                    from: booking.departureLocation?.name || route.from,
-                    to: booking.arrivalLocation?.name || route.to,
-                    date: new Date(booking.departureTime).toLocaleDateString(),
-                    time: new Date(booking.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    seat: booking.seatNumber || seatPreference,
-                    travelClass: booking.travelClass || 'Economy',
-                    status: booking.status || 'Confirmed',
-                }
-            });
+            router.push('/feature/(home)/bookings');
         } catch (err: any) {
             const msg = err?.response?.data?.message || err?.message || 'Failed to place booking';
             toast.show(msg, { type: 'danger' });
