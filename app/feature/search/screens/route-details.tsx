@@ -134,7 +134,7 @@ export default function RouteDetailsScreen() {
                         ) : (
                             <>
                                 <Ionicons name="heart-outline" size={20} color="#003580" />
-                                <Text className="text-[#003580] font-[Outfit-Bold] text-lg ml-2">Save</Text>
+                                <Text className="text-[#003580] font-[Outfit-Bold] text-lg ml-2">Book & Save</Text>
                             </>
                         )}
                     </TouchableOpacity>
