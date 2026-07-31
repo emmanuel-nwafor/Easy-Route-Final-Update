@@ -1,0 +1,47 @@
+- [x] Translate short airport codes (LHS/LHR -> London Heathrow Airport, DHS/DPS -> Denpasar Bali Airport) across all search cards and screens
+- [x] Fix Smart Budget Estimator to be fully functional, adding an "Apply recommended budget" action trigger
+- [x] Integrate global theme context in AuthContext.tsx and configure profile, home, bookings, plan, and headers to support real-time dark mode
+- [x] Add confirmation alert modal when user clicks Log Out
+- [x] Update route details booking modal form: require user details input before choosing trip, and render conditional condition/equipment inputs if special assistance is toggled
+- [x] Sync backend Booking controller to validate and persist direct details parameters into database
+- [x] Hide comparison titles on search screens where comparison is not taking place
+- [x] Refactor booking details page: extract logic/state into useBookingDetails.ts hook and HTML template into pdfTemplate.ts
+- [x] Create a chatbot router/controller in the backend to process travel queries and return rich replies + suggestion chips
+- [x] Integrate chatbot endpoint in backend server.js routing pipeline
+- [x] Theme tab navigator dynamically using isDarkMode state and conditionally hide the chatbot screen based on APP_VARIANT in _layout.tsx
+- [x] Create advanced chatbot UI screen with dynamic theme support, suggested topic chips, text formatting, typing state, and scroll locks in chatbot.tsx
+- [x] Add AI_API_KEY environment variable to backend .env file and connect it to Google Gemini model requests
+- [x] Fix JSX unterminated tag syntax error in route-details.tsx
+- [x] Create a custom LogoutConfirmationModal component in shared modals and replace native Alert popups in profile screen
+- [x] Remove the logout button from the HomeHeader component
+- [x] Refactor recent searches loading logic to initialize as empty when no searches exist, and display a premium empty-state routes explorer card linking to the All Routes search screen
+- [x] Wrap backend connectDB and seedRoutes calls in async startServer wrapper to ensure DB seeding completes successfully before server starts listening
+- [x] Replace standard Image component with expo-image in BookingCard to fix Unsplash image rendering on Android
+- [x] Program AI travel assistant chatbot (Gemini + fallback rules) to output step-by-step instructions for creating a travel plan on EasyRoute
+- [x] Pass planId parameters from bookings tab lists and load plan details/coordinates fallbacks in useBookingDetails to ensure drag-and-drop timeline builder and map pins display correctly
+- [x] Fix case-sensitive model imports (Plan -> plan.model, Booking -> booking.model) in chatbot.controller.js to resolve Render deployment failures
+- [x] Mount PassengerDetailsModal inside MapSearchScreen to query passenger details before confirming map bookings
+- [x] Enable midway layover stop markers and route saving logic inside MapSearchScreen
+- [x] Integrate Route collections inside backend Chatbot controller context to enable real-time available route listings and recommendations via AI/fallback systems
+- [x] Re-architect Simple UI Plan screen to show only From, To, Departure Date, and Transport Mode (Vehicle Type)
+- [x] Hide optional preferences accordion, accommodation toggle, priority sliders, and smart budget estimator inside Simple UI Plan screen
+- [x] Implement safe date parsing fallbacks inside handleGeneratePlan to avoid crash due to invalid date string inputs (Select Date)
+- [x] Implement React.useEffect automatic plan submission/generation once all 4 fields are selected inside Simple UI Plan screen
+- [x] Fix React list unique key prop warnings inside booking-details.tsx by applying index and model ID fallbacks (act.id || act._id || index)
+- [x] Conditionally import and render PlanYourJourneyCard inside home.tsx for Simple UI mode
+- [x] Hide Advanced UI sections (search, saved, settings, and active status dashboard grid cards) inside home.tsx when in Simple UI mode
+- [x] Implement isFormDirty state in PlanScreen to prevent infinite auto-submission redirect loop on cold Tab mounts
+- [x] Truncate recent searches array size to a maximum of 4 items inside both usePlan.ts and home.tsx
+- [x] Map Flight transport mode option to plane icon inside plan.tsx
+- [x] Stop node-cron daily reset schedules and delete cron.jobs.js database clearing file
+- [x] Refactor routes database seeder to only insert seed data if Route count is 0, completely removing startup deleteMany database-wiping triggers
+- [x] Implement dynamic route seeding on query misses in discovery.controller.js: generates and inserts 3 fresh, permanent multi-modal routes matching the user's exact query (e.g. Flight, Train, Bus) and resolves stable lat/lng coordinates deterministic hashes
+- [x] Add welcome notification creation on new user registration in auth.controller.js
+- [x] Add plan-related notification creation inside createPlan, updatePlan, and deletePlan functions in plan.controller.js
+- [x] Add booking-related notification creation on update (cancel) and delete bookings inside booking.controller.js
+- [x] Update CompareRoutesScreen to query only precise routes matching the from/to search parameters instead of fetching all routes
+- [x] Display Compared routes path in CompareRoutesScreen header and render precise route segments inside each compare route card
+- [x] Replace the single Save Journey button with side-by-side Save and Book Now buttons on the Simple UI RouteDetailsScreen layout
+- [x] Mount PassengerDetailsModal inside the Simple UI RouteDetailsScreen return block to query details before booking
+- [x] Configure useRouteDetails hook to navigate directly to the bookings/tickets tab screen upon successful booking confirmation
+- [x] Seed 10 additional routes (increasing database seeder target limit from 60 to 70 routes)
