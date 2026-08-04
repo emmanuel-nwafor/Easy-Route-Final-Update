@@ -161,7 +161,7 @@ export default function HomeScreen() {
                     <MotiView {...fadeInUp(200)} className="flex-row flex-wrap justify-between mb-6">
                         {/* Search Journey Card */}
                         <TouchableOpacity
-                            onPress={() => router.push("/feature/search/screens/all-search")}
+                            onPress={() => router.push("/feature/(home)/plan")}
                             activeOpacity={0.8}
                             style={{ backgroundColor: cardBg, borderColor: borderColor }}
                             className="p-4 rounded-2xl border w-[48%] mb-4"

@@ -45,3 +45,6 @@
 - [x] Mount PassengerDetailsModal inside the Simple UI RouteDetailsScreen return block to query details before booking
 - [x] Configure useRouteDetails hook to navigate directly to the bookings/tickets tab screen upon successful booking confirmation
 - [x] Seed 10 additional routes (increasing database seeder target limit from 60 to 70 routes)
+- [x] Add Search Route CTA button right below the Transport Mode section in Advanced UI PlanScreen tab
+- [x] Extract transport parameters in AllRoutesSearchScreen and fetch/filter routes using the exact searched transport type (Flight, Train, Bus, Car)
+- [x] Redesign AllRoutesSearchScreen header to display the inputted route city names and selected transport query parameters

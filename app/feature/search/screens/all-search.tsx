@@ -23,7 +23,7 @@ import { translateAirportCode } from "../../../../constants";
 export default function AllRoutesSearchScreen() {
     const router = useRouter();
     const { isDarkMode } = useAuth();
-    const params = useLocalSearchParams<{ from?: string, to?: string, date?: string }>();
+    const params = useLocalSearchParams<{ from?: string, to?: string, date?: string, transport?: string }>();
 
     const [routes, setRoutes] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +35,7 @@ export default function AllRoutesSearchScreen() {
     const from = params.from || "LHR";
     const to = params.to || "DPS";
     const date = params.date || "15 Dec, 2025";
+    const transport = params.transport || "Flight";
 
     useEffect(() => {
         loadUserLocation();
@@ -64,13 +65,14 @@ export default function AllRoutesSearchScreen() {
 
     useEffect(() => {
         fetchRoutes();
-    }, [from, to]);
+    }, [from, to, transport]);
 
     const fetchRoutes = async () => {
         setIsLoading(true);
         setError("");
         try {
-            const data = await PlansService.searchRoutes({ from, to, type: 'flight' });
+            const type = transport.toLowerCase();
+            const data = await PlansService.searchRoutes({ from, to, type });
             setRoutes(data);
         } catch (err) {
             console.error(err);
@@ -106,8 +108,12 @@ export default function AllRoutesSearchScreen() {
 
             {/* Header Section */}
             <View className="px-6 py-4">
-                <Text style={{ fontSize: wp(6), color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="font-[Outfit-Bold]">Available Routes</Text>
-                <Text style={{ fontSize: wp(3.8), color: isDarkMode ? '#94A3B8' : '#64748B' }} className="font-[Outfit-Medium]">{userLocation} • {date}</Text>
+                <Text style={{ fontSize: wp(6), color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="font-[Outfit-Bold]">
+                    {translateAirportCode(from)} ➔ {translateAirportCode(to)}
+                </Text>
+                <Text style={{ fontSize: wp(3.8), color: isDarkMode ? '#94A3B8' : '#64748B' }} className="font-[Outfit-Medium]">
+                    {transport} • {date}
+                </Text>
             </View>
 
             {/* Filter Tabs */}

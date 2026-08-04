@@ -25,9 +25,11 @@ import * as Haptics from 'expo-haptics';
 import { APP_VARIANT } from "../shared/data/appConfig";
 import { usePlan } from "../../../hooks/usePlan";
 import { useAuth } from "../shared/data/AuthContext";
+import { useRouter } from "expo-router";
 
 export default function PlanScreen() {
     const { isDarkMode } = useAuth();
+    const router = useRouter();
     const [isFormDirty, setIsFormDirty] = React.useState(false);
     const {
         budget, setBudget,
@@ -61,6 +63,20 @@ export default function PlanScreen() {
         tripPace, setTripPace,
         selectedPreferences, setSelectedPreferences
     } = usePlan();
+
+    const handleSearchRoute = () => {
+        router.push({
+            pathname: '/feature/search/screens/all-search',
+            params: {
+                from: origin || 'London',
+                to: destination || 'Paris',
+                date: departureDate || 'Dec 15, 2025',
+                transport: transportMode || 'Flight',
+                adults: adults,
+                children: children
+            }
+        });
+    };
 
     // Auto-generation effect for Simple UI mode when all 4 fields are set
     React.useEffect(() => {
@@ -280,6 +296,15 @@ export default function PlanScreen() {
                                 ))}
                             </View>
                         </View>
+
+                        {/* Search Route CTA Button */}
+                        <TouchableOpacity
+                            onPress={handleSearchRoute}
+                            className="bg-white border border-[#003580] py-3.5 rounded-2xl flex-row justify-center items-center mb-6 shadow-sm shadow-slate-100"
+                        >
+                            <Ionicons name="search" size={20} color="#003580" />
+                            <Text className="text-[#003580] font-[Outfit-Bold] text-base ml-2">Search Route</Text>
+                        </TouchableOpacity>
 
                         {/* Budget Slider */}
                         <View className="mb-6">
