@@ -55,9 +55,9 @@ export default function RouteDetailsScreen() {
     } = useRouteDetails(routesStr);
 
     const isAdvanced = APP_VARIANT === 'advanced';
+    const [expandedDetail, setExpandedDetail] = React.useState<'overview' | 'arrival' | 'fare' | 'map' | null>('overview');
 
     if (!isAdvanced) {
-        // Simple UI Layout: Display only: Full route, Stops, Transport type, Estimated arrival, Walking distance, Journey duration. Buttons: Save Journey, Back.
         return (
             <View className="flex-1 bg-white px-6 pt-16">
                 <StatusBar barStyle="dark-content" />
@@ -76,50 +76,146 @@ export default function RouteDetailsScreen() {
                         Journey Details
                     </Text>
 
-                    {/* Minimal Information Cards with Large Spacing */}
-                    <View className="space-y-6">
-                        <View className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-4">
-                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase tracking-wider mb-1">Full Route</Text>
-                            <Text style={{ fontSize: wp(5) }} className="font-[Outfit-Bold] text-[#003580]">
+                    {/* Accordion 1: Overview */}
+                    <TouchableOpacity
+                        onPress={() => setExpandedDetail(expandedDetail === 'overview' ? null : 'overview')}
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: '#F8FAFC',
+                            padding: 16,
+                            borderRadius: 12,
+                            borderWidth: 1,
+                            borderColor: '#F1F5F9',
+                            marginBottom: 10
+                        }}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Ionicons name="information-circle-outline" size={18} color="#003580" />
+                            <Text style={{ fontFamily: 'Outfit-Bold', color: '#0F172A', marginLeft: 8, fontSize: 15 }}>Overview</Text>
+                        </View>
+                        <Ionicons name={expandedDetail === 'overview' ? 'chevron-up' : 'chevron-down'} size={18} color="#94A3B8" />
+                    </TouchableOpacity>
+
+                    {expandedDetail === 'overview' && (
+                        <View className="bg-slate-50 p-5 rounded-2xl border border-slate-100 mb-4 ml-1">
+                            <Text style={{ fontSize: wp(4.5) }} className="font-[Outfit-Bold] text-slate-800 mb-2">
                                 {route.from} ➔ {route.to}
                             </Text>
-                        </View>
-
-                        <View className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-4">
-                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase tracking-wider mb-1">Transport Type</Text>
-                            <Text style={{ fontSize: wp(4.5) }} className="font-[Outfit-Bold] text-slate-800 capitalize">
-                                {route.type || 'Flight'} ({route.operator})
+                            <Text style={{ fontSize: wp(3.8) }} className="font-[Outfit-Bold] text-[#003580] uppercase">
+                                {route.type || 'Flight'} (Non-stop)
                             </Text>
                         </View>
+                    )}
 
-                        <View className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-4">
-                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase tracking-wider mb-1">Stops</Text>
-                            <Text style={{ fontSize: wp(4.5) }} className="font-[Outfit-Bold] text-slate-800">
-                                Non-stop (Direct)
-                            </Text>
+                    {/* Accordion 2: Arrival & Departure */}
+                    <TouchableOpacity
+                        onPress={() => setExpandedDetail(expandedDetail === 'arrival' ? null : 'arrival')}
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: '#F8FAFC',
+                            padding: 16,
+                            borderRadius: 12,
+                            borderWidth: 1,
+                            borderColor: '#F1F5F9',
+                            marginBottom: 10
+                        }}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Ionicons name="time-outline" size={18} color="#003580" />
+                            <Text style={{ fontFamily: 'Outfit-Bold', color: '#0F172A', marginLeft: 8, fontSize: 15 }}>Arrival & Departure</Text>
                         </View>
+                        <Ionicons name={expandedDetail === 'arrival' ? 'chevron-up' : 'chevron-down'} size={18} color="#94A3B8" />
+                    </TouchableOpacity>
 
-                        <View className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-4">
-                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase tracking-wider mb-1">Estimated Arrival & Departure</Text>
-                            <Text style={{ fontSize: wp(4.5) }} className="font-[Outfit-Bold] text-slate-800">
-                                Departs {route.time || '10:00 AM'} • Arrives {route.arrivalTime || '12:00 PM'}
+                    {expandedDetail === 'arrival' && (
+                        <View className="bg-slate-50 p-5 rounded-2xl border border-slate-100 mb-4 ml-1">
+                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase mb-1">Departure</Text>
+                            <Text style={{ fontSize: wp(4) }} className="font-[Outfit-Bold] text-slate-800 mb-3">
+                                {route.time || '10:00 AM'}
                             </Text>
-                        </View>
-
-                        <View className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-4">
-                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase tracking-wider mb-1">Journey Duration</Text>
-                            <Text style={{ fontSize: wp(4.5) }} className="font-[Outfit-Bold] text-slate-800">
+                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase mb-1">Arrival</Text>
+                            <Text style={{ fontSize: wp(4) }} className="font-[Outfit-Bold] text-slate-800 mb-3">
+                                {route.arrivalTime || '12:00 PM'}
+                            </Text>
+                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase mb-1">Duration</Text>
+                            <Text style={{ fontSize: wp(4) }} className="font-[Outfit-Bold] text-slate-800">
                                 {route.duration || '2h 00m'}
                             </Text>
                         </View>
+                    )}
 
-                        <View className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
-                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase tracking-wider mb-1">Walking Distance</Text>
-                            <Text style={{ fontSize: wp(4.5) }} className="font-[Outfit-Bold] text-slate-800">
-                                Approx. 10 - 15 minutes walking
+                    {/* Accordion 3: Fare & Info */}
+                    <TouchableOpacity
+                        onPress={() => setExpandedDetail(expandedDetail === 'fare' ? null : 'fare')}
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: '#F8FAFC',
+                            padding: 16,
+                            borderRadius: 12,
+                            borderWidth: 1,
+                            borderColor: '#F1F5F9',
+                            marginBottom: 10
+                        }}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Ionicons name="card-outline" size={18} color="#003580" />
+                            <Text style={{ fontFamily: 'Outfit-Bold', color: '#0F172A', marginLeft: 8, fontSize: 15 }}>Fare & Info</Text>
+                        </View>
+                        <Ionicons name={expandedDetail === 'fare' ? 'chevron-up' : 'chevron-down'} size={18} color="#94A3B8" />
+                    </TouchableOpacity>
+
+                    {expandedDetail === 'fare' && (
+                        <View className="bg-slate-50 p-5 rounded-2xl border border-slate-100 mb-4 ml-1">
+                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase mb-1">Estimated Fare</Text>
+                            <Text style={{ fontSize: wp(5) }} className="font-[Outfit-Bold] text-slate-800 mb-3">
+                                ${route.price || '120'}
+                            </Text>
+                            <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 uppercase mb-1">Operator</Text>
+                            <Text style={{ fontSize: wp(4) }} className="font-[Outfit-Bold] text-slate-800">
+                                {route.operator || 'Unknown Operator'}
                             </Text>
                         </View>
-                    </View>
+                    )}
+
+                    {/* Accordion 4: Map */}
+                    <TouchableOpacity
+                        onPress={() => setExpandedDetail(expandedDetail === 'map' ? null : 'map')}
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: '#F8FAFC',
+                            padding: 16,
+                            borderRadius: 12,
+                            borderWidth: 1,
+                            borderColor: '#F1F5F9',
+                            marginBottom: 20
+                        }}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Ionicons name="map-outline" size={18} color="#003580" />
+                            <Text style={{ fontFamily: 'Outfit-Bold', color: '#0F172A', marginLeft: 8, fontSize: 15 }}>Map</Text>
+                        </View>
+                        <Ionicons name={expandedDetail === 'map' ? 'chevron-up' : 'chevron-down'} size={18} color="#94A3B8" />
+                    </TouchableOpacity>
+
+                    {expandedDetail === 'map' && (
+                        <View className="bg-slate-50 p-5 rounded-2xl border border-slate-100 mb-4 ml-1">
+                            <TouchableOpacity
+                                onPress={handleViewInMap}
+                                className="py-3 bg-white border border-[#003580] rounded-xl flex-row items-center justify-center shadow-sm"
+                            >
+                                <Ionicons name="map-outline" size={18} color="#003580" />
+                                <Text className="text-[#003580] font-[Outfit-Bold] ml-2">Open Map</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 </ScrollView>
 
                 {/* Bottom Action Buttons (Save and Book Now) */}

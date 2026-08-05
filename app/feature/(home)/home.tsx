@@ -152,7 +152,13 @@ export default function HomeScreen() {
                 {/* Plan Journey Card (Simple UI only) */}
                 {APP_VARIANT !== 'advanced' && (
                     <MotiView {...fadeInUp(200)} className="mb-6">
-                        <PlanYourJourneyCard />
+                        <TouchableOpacity
+                            onPress={() => router.push("/feature/(home)/plan")}
+                            style={{ paddingVertical: 18 }}
+                            className="bg-[#003580] rounded-2xl items-center justify-center shadow-md shadow-blue-900/10"
+                        >
+                            <Text className="text-white font-[Outfit-Bold] text-base">Plan a Journey</Text>
+                        </TouchableOpacity>
                     </MotiView>
                 )}
 
@@ -261,26 +267,17 @@ export default function HomeScreen() {
                         <TouchableOpacity
                             onPress={() => router.push('/feature/search/screens/all-search')}
                             style={{ 
-                                backgroundColor: isDarkMode ? '#1E293B' : '#F8FAFC', 
-                                borderColor: isDarkMode ? '#475569' : '#CBD5E1',
-                                borderStyle: 'dashed'
+                                backgroundColor: cardBg, 
+                                borderColor: borderColor,
                             }}
-                            className="p-6 rounded-2xl border items-center justify-center"
+                            className="p-5 rounded-2xl border items-center justify-center shadow-sm"
                         >
-                            <View style={{ backgroundColor: isDarkMode ? '#0F172A' : '#EFF6FF' }} className="w-12 h-12 rounded-full items-center justify-center mb-3">
-                                <Ionicons name="search-outline" size={24} color={isDarkMode ? '#38BDF8' : '#003580'} />
-                            </View>
-                            <Text style={{ fontSize: wp(3.8), color: primaryText }} className="font-[Outfit-Bold] text-center">
-                                No recent searches
+                            <Text style={{ fontSize: wp(4.2), color: primaryText }} className="font-[Outfit-Bold] text-center">
+                                Recent Searches
                             </Text>
-                            <Text style={{ fontSize: wp(3.0), color: secondaryText }} className="font-[Outfit-Medium] text-center mt-1 mb-4">
-                                Tap to explore available flight, train, and bus routes!
+                            <Text style={{ fontSize: wp(3.2), color: secondaryText }} className="font-[Outfit-Medium] text-center mt-1">
+                                Tap to explore available routes!
                             </Text>
-                            <View style={{ backgroundColor: isDarkMode ? '#38BDF8' : '#003580' }} className="px-5 py-2.5 rounded-xl">
-                                <Text style={{ color: isDarkMode ? '#0F172A' : 'white' }} className="font-[Outfit-Bold] text-xs">
-                                    Explore Routes
-                                </Text>
-                            </View>
                         </TouchableOpacity>
                     )}
                 </MotiView>

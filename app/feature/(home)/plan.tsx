@@ -78,6 +78,8 @@ export default function PlanScreen() {
         });
     };
 
+    const [expandedAccordion, setExpandedAccordion] = React.useState<'route' | 'datetime' | 'travellers' | 'preferences' | null>('route');
+
     // Auto-generation effect for Simple UI mode when all 4 fields are set
     React.useEffect(() => {
         if (APP_VARIANT !== 'advanced' && isFormDirty) {
@@ -130,113 +132,229 @@ export default function PlanScreen() {
                 contentContainerStyle={{ paddingBottom: hp(12), paddingHorizontal: wp(4) }}
             >
 
-                {/* Locations Card */}
-                <MotiView
-                    {...fadeInUp(200)}
-                    className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm shadow-slate-200 mb-4"
-                >
-                    <TouchableOpacity 
-                        onPress={() => setShowOriginModal(true)}
-                        className="mb-4"
-                    >
-                        <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-1">From</Text>
-                        <View className="flex-row items-center border-b border-slate-50 pb-3">
-                            <Ionicons name="location" size={wp(5)} color="#003580" />
-                            <Text className={`flex-1 ml-3 font-[Outfit-Bold] ${origin ? 'text-slate-900' : 'text-slate-300'}`}>
-                                {origin || "Detecting location..."}
-                            </Text>
-                            {isLocating ? (
-                                <ActivityIndicator size="small" color="#003580" />
-                            ) : (
-                                <Ionicons name="navigate-circle-outline" size={wp(6)} color="#003580" />
-                            )}
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        onPress={() => setShowDestModal(true)}
-                    >
-                        <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-1">To</Text>
-                        <View className="flex-row items-center pb-2">
-                            <Ionicons name="airplane" size={wp(5)} color="#EF4444" />
-                            <Text className={`flex-1 ml-3 font-[Outfit-Bold] ${destination ? 'text-slate-900' : 'text-slate-300'}`}>
-                                {destination || "Where are we going?"}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </MotiView>
-
-                {/* Date & Time Section */}
-                <MotiView {...fadeInUp(300)} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mb-4">
-                    <TouchableOpacity onPress={() => setShowDateModal(true)}>
-                        <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-1">Departure Date</Text>
-                        <View className="flex-row items-center border-b border-slate-100 pb-2 mb-2">
-                            <Ionicons name="calendar" size={wp(5)} color="#003580" />
-                            <Text className="ml-3 font-[Outfit-Bold] text-slate-900">{departureDate}</Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    {APP_VARIANT === 'advanced' && (
-                        <MotiView
-                            from={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex-row items-center justify-between mt-3"
+                {APP_VARIANT !== 'advanced' ? (
+                    <>
+                        {/* Dropdown 1: Route */}
+                        <TouchableOpacity
+                            onPress={() => setExpandedAccordion(expandedAccordion === 'route' ? null : 'route')}
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                backgroundColor: 'white',
+                                padding: 16,
+                                borderRadius: 16,
+                                borderWidth: 1,
+                                borderColor: '#F1F5F9',
+                                marginBottom: 12
+                            }}
+                            className="shadow-sm"
                         >
-                            <TouchableOpacity 
-                                onPress={() => setShowTimeModal(true)}
-                                className="flex-1"
-                            >
-                                <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-1">Departure Time</Text>
-                                <View className="flex-row items-center border border-slate-100 rounded-xl p-3">
-                                    <Ionicons name="time-outline" size={wp(5)} color="#003580" />
-                                    <Text className="ml-2 font-[Outfit-Bold] text-slate-900">{departureTime}</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress={() => setShowReturnModal(true)}
-                                className={`flex-1 flex-row items-center p-3 rounded-xl ml-3 mt-4 border ${returnDate ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-100'}`}
-                            >
-                                <Ionicons name={returnDate ? "calendar" : "add"} size={wp(5)} color="#003580" />
-                                <View className="ml-2">
-                                    <Text className="text-[10px] font-[Outfit-Medium] text-slate-400 uppercase">{returnDate ? "Return" : "Add Return"}</Text>
-                                    <Text className="font-[Outfit-Bold] text-[#003580] text-[12px]">{returnDate || "Optional"}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </MotiView>
-                    )}
-                </MotiView>
+                            <View className="flex-row items-center">
+                                <Ionicons name="map-outline" size={18} color="#003580" />
+                                <Text className="font-[Outfit-Bold] text-slate-800 ml-3 text-base">Route</Text>
+                            </View>
+                            <Ionicons name={expandedAccordion === 'route' ? 'chevron-up' : 'chevron-down'} size={18} color="#94A3B8" />
+                        </TouchableOpacity>
 
-                {/* Vehicle Type Section (Simple UI only) */}
-                {APP_VARIANT !== 'advanced' && (
-                    <MotiView {...fadeInUp(350)} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mb-4">
-                        <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-2">Vehicle Type</Text>
-                        <View className="flex-row justify-between">
-                            {['Flight', 'Train', 'Bus', 'Car'].map((mode) => (
-                                <TouchableOpacity
-                                    key={mode}
-                                    onPress={() => {
-                                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                        setTransportMode(mode);
-                                        setIsFormDirty(true);
-                                    }}
-                                    className={`flex-1 flex-row items-center justify-center py-3 rounded-xl border mx-1 ${transportMode === mode ? 'bg-[#003580] border-[#003580]' : 'bg-slate-50 border-slate-100'}`}
+                        {expandedAccordion === 'route' && (
+                            <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm shadow-slate-200 mb-4">
+                                <TouchableOpacity 
+                                    onPress={() => setShowOriginModal(true)}
+                                    className="mb-4"
                                 >
-                                    <FontAwesome5
-                                        name={mode === 'Flight' ? 'plane' : mode === 'Car' ? 'car' : mode.toLowerCase()}
-                                        size={12}
-                                        color={transportMode === mode ? 'white' : '#003580'}
-                                    />
-                                    <Text className={`ml-1.5 text-[11px] font-[Outfit-Bold] ${transportMode === mode ? 'text-white' : 'text-slate-600'}`}>
-                                        {mode}
-                                    </Text>
+                                    <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-1">From</Text>
+                                    <View className="flex-row items-center border-b border-slate-50 pb-3">
+                                        <Ionicons name="location" size={wp(5)} color="#003580" />
+                                        <Text className={`flex-1 ml-3 font-[Outfit-Bold] ${origin ? 'text-slate-900' : 'text-slate-300'}`}>
+                                            {origin || "Detecting location..."}
+                                        </Text>
+                                        {isLocating ? (
+                                            <ActivityIndicator size="small" color="#003580" />
+                                        ) : (
+                                            <Ionicons name="navigate-circle-outline" size={wp(6)} color="#003580" />
+                                        )}
+                                    </View>
                                 </TouchableOpacity>
-                            ))}
-                        </View>
-                    </MotiView>
-                )}
 
-                {/* Advanced parameters container */}
-                {APP_VARIANT === 'advanced' && (
+                                <TouchableOpacity 
+                                    onPress={() => setShowDestModal(true)}
+                                >
+                                    <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-1">To</Text>
+                                    <View className="flex-row items-center pb-2">
+                                        <Ionicons name="airplane" size={wp(5)} color="#EF4444" />
+                                        <Text className={`flex-1 ml-3 font-[Outfit-Bold] ${destination ? 'text-slate-900' : 'text-slate-300'}`}>
+                                            {destination || "Where are we going?"}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </MotiView>
+                        )}
+
+                        {/* Dropdown 2: Date & Time */}
+                        <TouchableOpacity
+                            onPress={() => setExpandedAccordion(expandedAccordion === 'datetime' ? null : 'datetime')}
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                backgroundColor: 'white',
+                                padding: 16,
+                                borderRadius: 16,
+                                borderWidth: 1,
+                                borderColor: '#F1F5F9',
+                                marginBottom: 12
+                            }}
+                            className="shadow-sm"
+                        >
+                            <View className="flex-row items-center">
+                                <Ionicons name="calendar-outline" size={18} color="#003580" />
+                                <Text className="font-[Outfit-Bold] text-slate-800 ml-3 text-base">Date & Time</Text>
+                            </View>
+                            <Ionicons name={expandedAccordion === 'datetime' ? 'chevron-up' : 'chevron-down'} size={18} color="#94A3B8" />
+                        </TouchableOpacity>
+
+                        {expandedAccordion === 'datetime' && (
+                            <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm mb-4">
+                                <TouchableOpacity onPress={() => setShowDateModal(true)}>
+                                    <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-1">Departure Date</Text>
+                                    <View className="flex-row items-center border-b border-slate-100 pb-2">
+                                        <Ionicons name="calendar" size={wp(5)} color="#003580" />
+                                        <Text className="ml-3 font-[Outfit-Bold] text-slate-900">{departureDate}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </MotiView>
+                        )}
+
+                        {/* Dropdown 3: Travellers & Mode */}
+                        <TouchableOpacity
+                            onPress={() => setExpandedAccordion(expandedAccordion === 'travellers' ? null : 'travellers')}
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                backgroundColor: 'white',
+                                padding: 16,
+                                borderRadius: 16,
+                                borderWidth: 1,
+                                borderColor: '#F1F5F9',
+                                marginBottom: 12
+                            }}
+                            className="shadow-sm"
+                        >
+                            <View className="flex-row items-center">
+                                <Ionicons name="people-outline" size={18} color="#003580" />
+                                <Text className="font-[Outfit-Bold] text-slate-800 ml-3 text-base">Travellers & Mode</Text>
+                            </View>
+                            <Ionicons name={expandedAccordion === 'travellers' ? 'chevron-up' : 'chevron-down'} size={18} color="#94A3B8" />
+                        </TouchableOpacity>
+
+                        {expandedAccordion === 'travellers' && (
+                            <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm mb-4">
+                                <TouchableOpacity onPress={() => setShowTravellerModal(true)} className="mb-4">
+                                    <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-1">Travellers</Text>
+                                    <View className="flex-row items-center justify-between border-b border-slate-100 pb-2">
+                                        <View className="flex-row items-center">
+                                            <Ionicons name="person-outline" size={wp(4)} color="#003580" />
+                                            <Text className="ml-2 font-[Outfit-Bold] text-slate-900 text-sm">
+                                                {adults + children} Guest{adults + children > 1 ? 's' : ''}
+                                            </Text>
+                                        </View>
+                                        <Ionicons name="chevron-down" size={wp(3)} color="#CBD5E1" />
+                                    </View>
+                                </TouchableOpacity>
+
+                                <Text className="text-[12px] font-[Outfit-Medium] text-slate-400 mb-2">Transport Mode</Text>
+                                <View className="flex-row justify-between">
+                                    {['Flight', 'Train', 'Bus', 'Car'].map((mode) => (
+                                        <TouchableOpacity
+                                            key={mode}
+                                            onPress={() => {
+                                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                                setTransportMode(mode);
+                                                setIsFormDirty(true);
+                                            }}
+                                            className={`flex-1 flex-row items-center justify-center py-3 rounded-xl border mx-1 ${transportMode === mode ? 'bg-[#003580] border-[#003580]' : 'bg-slate-50 border-slate-100'}`}
+                                        >
+                                            <FontAwesome5
+                                                name={mode === 'Flight' ? 'plane' : mode === 'Car' ? 'car' : mode.toLowerCase()}
+                                                size={12}
+                                                color={transportMode === mode ? 'white' : '#003580'}
+                                            />
+                                            <Text className={`ml-1.5 text-[11px] font-[Outfit-Bold] ${transportMode === mode ? 'text-white' : 'text-slate-600'}`}>
+                                                {mode}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            </MotiView>
+                        )}
+
+                        {/* Dropdown 4: Preferences (Optional) */}
+                        <TouchableOpacity
+                            onPress={() => setExpandedAccordion(expandedAccordion === 'preferences' ? null : 'preferences')}
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                backgroundColor: 'white',
+                                padding: 16,
+                                borderRadius: 16,
+                                borderWidth: 1,
+                                borderColor: '#F1F5F9',
+                                marginBottom: 16
+                            }}
+                            className="shadow-sm"
+                        >
+                            <View className="flex-row items-center">
+                                <Ionicons name="options-outline" size={18} color="#003580" />
+                                <Text className="font-[Outfit-Bold] text-slate-800 ml-3 text-base">Preferences (Optional)</Text>
+                            </View>
+                            <Ionicons name={expandedAccordion === 'preferences' ? 'chevron-up' : 'chevron-down'} size={18} color="#94A3B8" />
+                        </TouchableOpacity>
+
+                        {expandedAccordion === 'preferences' && (
+                            <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm mb-4">
+                                <View className="mb-4">
+                                    <Text className="font-[Outfit-Bold] text-slate-900 text-sm">Budget Range</Text>
+                                    <Slider
+                                        style={{ width: '100%', height: 40 }}
+                                        minimumValue={300}
+                                        maximumValue={2000}
+                                        value={budget}
+                                        onValueChange={setBudget}
+                                        minimumTrackTintColor="#003580"
+                                        maximumTrackTintColor="#E2E8F0"
+                                        thumbTintColor="#003580"
+                                    />
+                                    <View className="flex-row justify-between px-1">
+                                        <Text className="text-slate-400 font-[Outfit-Medium] text-[10px]">£300</Text>
+                                        <Text className="text-[#003580] font-[Outfit-Bold] text-xs">£{budget}</Text>
+                                        <Text className="text-slate-400 font-[Outfit-Medium] text-[10px]">£2,000</Text>
+                                    </View>
+                                </View>
+
+                                <View className="flex-row justify-between items-center mb-2">
+                                    <Text className="font-[Outfit-Bold] text-slate-900 text-sm">Accommodation needed?</Text>
+                                    <Switch
+                                        value={accommodation}
+                                        onValueChange={setAccommodation}
+                                        trackColor={{ false: "#CBD5E1", true: "#003580" }}
+                                    />
+                                </View>
+                            </MotiView>
+                        )}
+
+                        {/* Search Routes CTA Button */}
+                        <TouchableOpacity
+                            onPress={handleSearchRoute}
+                            className="bg-[#003580] py-4 rounded-2xl flex-row justify-center items-center mt-3 shadow-md shadow-blue-900/10"
+                        >
+                            <Ionicons name="search" size={20} color="white" />
+                            <Text className="text-white font-[Outfit-Bold] text-base ml-2">Search Routes</Text>
+                        </TouchableOpacity>
+                    </>
+                ) : (
                     <MotiView
                         from={{ opacity: 0 }}
                         animate={{ opacity: 1 }}

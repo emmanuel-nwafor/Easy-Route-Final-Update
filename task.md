@@ -48,3 +48,8 @@
 - [x] Add Search Route CTA button right below the Transport Mode section in Advanced UI PlanScreen tab
 - [x] Extract transport parameters in AllRoutesSearchScreen and fetch/filter routes using the exact searched transport type (Flight, Train, Bus, Car)
 - [x] Redesign AllRoutesSearchScreen header to display the inputted route city names and selected transport query parameters
+- [x] Redesign Simple UI Home screen to display a single big blue "Plan a Journey" CTA button, matching Screen 1 mockup
+- [x] Implement accordion layout for Route, Date & Time, Travellers & Mode, and Preferences (Optional) sections inside the Simple UI Plan screen, matching Screen 2 mockup
+- [x] Create premium custom Simple UI cards inside AllRoutesSearchScreen showing big times, routes, and duration info with a "View Details" button, matching Screen 3 mockup
+- [x] Implement accordion sections for Overview, Arrival & Departure, Fare & Info, and Map inside the Simple UI Route Details screen, matching Screen 4 mockup
+- [x] Implement accordion dropdown sections (Basic Info, Seat & Meal, Baggage & Extras) inside the reusable Passenger Details modal when in Simple UI, matching Screen 5 mockup

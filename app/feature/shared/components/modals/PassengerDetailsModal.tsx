@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { APP_VARIANT } from '../../data/appConfig';
 
 interface PassengerDetailsModalProps {
     visible: boolean;
@@ -72,6 +73,8 @@ export default function PassengerDetailsModal({
     isSubmitting,
     routeDetailsText
 }: PassengerDetailsModalProps) {
+    const [expandedSection, setExpandedSection] = React.useState<'basic' | 'seatmeal' | 'baggage' | null>('basic');
+
     return (
         <Modal
             animationType="slide"
@@ -95,180 +98,390 @@ export default function PassengerDetailsModal({
                     </View>
 
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                        {/* Passenger Name */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.inputLabel}>PASSENGER FULL NAME</Text>
-                            <TextInput
-                                value={passengerName}
-                                onChangeText={setPassengerName}
-                                placeholder="Enter full name (as on ID)"
-                                placeholderTextColor="#CBD5E1"
-                                style={styles.textInput}
-                            />
-                        </View>
-
-                        {/* Passenger Phone */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.inputLabel}>PHONE NUMBER</Text>
-                            <TextInput
-                                value={passengerPhone}
-                                onChangeText={setPassengerPhone}
-                                placeholder="e.g. +1 555-0199"
-                                placeholderTextColor="#CBD5E1"
-                                keyboardType="phone-pad"
-                                style={styles.textInput}
-                            />
-                        </View>
-
-                        {/* Seat Preference */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.inputLabel}>SEAT PREFERENCE</Text>
-                            <View style={styles.buttonGroup}>
-                                {['Window', 'Aisle', 'Middle'].map((pref) => (
-                                    <TouchableOpacity
-                                        key={pref}
-                                        onPress={() => setSeatPreference(pref)}
-                                        style={[
-                                            styles.optionButton,
-                                            seatPreference === pref ? styles.optionButtonActive : null
-                                        ]}
-                                    >
-                                        <Text
-                                            style={[
-                                                styles.optionText,
-                                                seatPreference === pref ? styles.optionTextActive : null
-                                            ]}
-                                        >
-                                            {pref}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        </View>
-
-                        {/* Meal Preference */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.inputLabel}>MEAL PREFERENCE</Text>
-                            <View style={styles.buttonGroup}>
-                                {['Standard', 'Vegetarian', 'Vegan'].map((meal) => (
-                                    <TouchableOpacity
-                                        key={meal}
-                                        onPress={() => setMealPreference(meal)}
-                                        style={[
-                                            styles.optionButton,
-                                            mealPreference === meal ? styles.optionButtonActive : null
-                                        ]}
-                                    >
-                                        <Text
-                                            style={[
-                                                styles.optionText,
-                                                mealPreference === meal ? styles.optionTextActive : null
-                                            ]}
-                                        >
-                                            {meal}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        </View>
-
-                        {/* Luggage Count */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.inputLabel}>LUGGAGE SELECTOR</Text>
-                            <View style={styles.buttonGroup}>
-                                {[0, 1, 2].map((num) => (
-                                    <TouchableOpacity
-                                        key={num}
-                                        onPress={() => setLuggageCount(num)}
-                                        style={[
-                                            styles.optionButton,
-                                            luggageCount === num ? styles.optionButtonActive : null
-                                        ]}
-                                    >
-                                        <Text
-                                            style={[
-                                                styles.optionText,
-                                                luggageCount === num ? styles.optionTextActive : null
-                                            ]}
-                                        >
-                                            {num === 0 ? 'Handbag' : `${num} Bag (+£${num * 20})`}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        </View>
-
-                        {/* Insurance Switch Row */}
-                        <View style={styles.switchRow}>
-                            <View style={styles.switchTextContainer}>
-                                <Text style={styles.switchTitle}>🛡 Premium Travel Insurance</Text>
-                                <Text style={styles.switchSubtitle}>Add insurance covering trip disruptions and emergency medical care (+£29).</Text>
-                            </View>
-                            <Switch
-                                value={hasInsurance}
-                                onValueChange={setHasInsurance}
-                                trackColor={{ false: "#CBD5E1", true: "#003580" }}
-                            />
-                        </View>
-
-                        {/* Special Assistance Switch Row */}
-                        <View style={styles.switchRow}>
-                            <View style={styles.switchTextContainer}>
-                                <Text style={styles.switchTitle}>♿ Special Assistance Needed</Text>
-                                <Text style={styles.switchSubtitle}>Check this if you require wheel-chair access or boarding assistance.</Text>
-                            </View>
-                            <Switch
-                                value={specialAssistance}
-                                onValueChange={setSpecialAssistance}
-                                trackColor={{ false: "#CBD5E1", true: "#003580" }}
-                            />
-                        </View>
-
-                        {/* Conditional Special Assistance inputs */}
-                        {specialAssistance && (
-                            <View style={styles.conditionalContainer}>
+                        {APP_VARIANT === 'advanced' ? (
+                            <>
+                                {/* Passenger Name */}
                                 <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>TYPE OF ASSISTANCE / CONDITION</Text>
+                                    <Text style={styles.inputLabel}>PASSENGER FULL NAME</Text>
                                     <TextInput
-                                        value={specialAssistanceType}
-                                        onChangeText={setSpecialAssistanceType}
-                                        placeholder="e.g. Wheelchair access, Visual impairment"
+                                        value={passengerName}
+                                        onChangeText={setPassengerName}
+                                        placeholder="Enter full name (as on ID)"
                                         placeholderTextColor="#CBD5E1"
                                         style={styles.textInput}
                                     />
                                 </View>
+
+                                {/* Passenger Phone */}
                                 <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>ADDITIONAL EQUIPMENT REQUIRED</Text>
+                                    <Text style={styles.inputLabel}>PHONE NUMBER</Text>
                                     <TextInput
-                                        value={specialAssistanceEquipment}
-                                        onChangeText={setSpecialAssistanceEquipment}
-                                        placeholder="e.g. Folding wheelchair size details"
-                                        placeholderTextColor="#CBD5E1"
-                                        style={styles.textInput}
-                                    />
-                                </View>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>EMERGENCY CONTACT FULL NAME</Text>
-                                    <TextInput
-                                        value={emergencyContactName}
-                                        onChangeText={setEmergencyContactName}
-                                        placeholder="Enter contact full name"
-                                        placeholderTextColor="#CBD5E1"
-                                        style={styles.textInput}
-                                    />
-                                </View>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.inputLabel}>EMERGENCY CONTACT PHONE</Text>
-                                    <TextInput
-                                        value={emergencyContactPhone}
-                                        onChangeText={setEmergencyContactPhone}
+                                        value={passengerPhone}
+                                        onChangeText={setPassengerPhone}
                                         placeholder="e.g. +1 555-0199"
                                         placeholderTextColor="#CBD5E1"
                                         keyboardType="phone-pad"
                                         style={styles.textInput}
                                     />
                                 </View>
-                            </View>
+
+                                {/* Seat Preference */}
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>SEAT PREFERENCE</Text>
+                                    <View style={styles.buttonGroup}>
+                                        {['Window', 'Aisle', 'Middle'].map((pref) => (
+                                            <TouchableOpacity
+                                                key={pref}
+                                                onPress={() => setSeatPreference(pref)}
+                                                style={[
+                                                    styles.optionButton,
+                                                    seatPreference === pref ? styles.optionButtonActive : null
+                                                ]}
+                                            >
+                                                <Text
+                                                    style={[
+                                                        styles.optionText,
+                                                        seatPreference === pref ? styles.optionTextActive : null
+                                                    ]}
+                                                >
+                                                    {pref}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </View>
+
+                                {/* Meal Preference */}
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>MEAL PREFERENCE</Text>
+                                    <View style={styles.buttonGroup}>
+                                        {['Standard', 'Vegetarian', 'Vegan'].map((meal) => (
+                                            <TouchableOpacity
+                                                key={meal}
+                                                onPress={() => setMealPreference(meal)}
+                                                style={[
+                                                    styles.optionButton,
+                                                    mealPreference === meal ? styles.optionButtonActive : null
+                                                ]}
+                                            >
+                                                <Text
+                                                    style={[
+                                                        styles.optionText,
+                                                        mealPreference === meal ? styles.optionTextActive : null
+                                                    ]}
+                                                >
+                                                    {meal}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </View>
+
+                                {/* Luggage Count */}
+                                <View style={styles.inputGroup}>
+                                    <Text style={styles.inputLabel}>LUGGAGE SELECTOR</Text>
+                                    <View style={styles.buttonGroup}>
+                                        {[0, 1, 2].map((num) => (
+                                            <TouchableOpacity
+                                                key={num}
+                                                onPress={() => setLuggageCount(num)}
+                                                style={[
+                                                    styles.optionButton,
+                                                    luggageCount === num ? styles.optionButtonActive : null
+                                                ]}
+                                            >
+                                                <Text
+                                                    style={[
+                                                        styles.optionText,
+                                                        luggageCount === num ? styles.optionTextActive : null
+                                                    ]}
+                                                >
+                                                    {num === 0 ? 'Handbag' : `${num} Bag (+£${num * 20})`}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </View>
+
+                                {/* Insurance Switch Row */}
+                                <View style={styles.switchRow}>
+                                    <View style={styles.switchTextContainer}>
+                                        <Text style={styles.switchTitle}>🛡 Premium Travel Insurance</Text>
+                                        <Text style={styles.switchSubtitle}>Add insurance covering trip disruptions and emergency medical care (+£29).</Text>
+                                    </View>
+                                    <Switch
+                                        value={hasInsurance}
+                                        onValueChange={setHasInsurance}
+                                        trackColor={{ false: "#CBD5E1", true: "#003580" }}
+                                    />
+                                </View>
+
+                                {/* Special Assistance Switch Row */}
+                                <View style={styles.switchRow}>
+                                    <View style={styles.switchTextContainer}>
+                                        <Text style={styles.switchTitle}>♿ Special Assistance Needed</Text>
+                                        <Text style={styles.switchSubtitle}>Check this if you require wheel-chair access or boarding assistance.</Text>
+                                    </View>
+                                    <Switch
+                                        value={specialAssistance}
+                                        onValueChange={setSpecialAssistance}
+                                        trackColor={{ false: "#CBD5E1", true: "#003580" }}
+                                    />
+                                </View>
+
+                                {/* Conditional Special Assistance inputs */}
+                                {specialAssistance && (
+                                    <View style={styles.conditionalContainer}>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>TYPE OF ASSISTANCE / CONDITION</Text>
+                                            <TextInput
+                                                value={specialAssistanceType}
+                                                onChangeText={setSpecialAssistanceType}
+                                                placeholder="e.g. Wheelchair access, Visual impairment"
+                                                placeholderTextColor="#CBD5E1"
+                                                style={styles.textInput}
+                                            />
+                                        </View>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>ADDITIONAL EQUIPMENT REQUIRED</Text>
+                                            <TextInput
+                                                value={specialAssistanceEquipment}
+                                                onChangeText={setSpecialAssistanceEquipment}
+                                                placeholder="e.g. Folding wheelchair size details"
+                                                placeholderTextColor="#CBD5E1"
+                                                style={styles.textInput}
+                                            />
+                                        </View>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>EMERGENCY CONTACT FULL NAME</Text>
+                                            <TextInput
+                                                value={emergencyContactName}
+                                                onChangeText={setEmergencyContactName}
+                                                placeholder="Enter contact full name"
+                                                placeholderTextColor="#CBD5E1"
+                                                style={styles.textInput}
+                                            />
+                                        </View>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>EMERGENCY CONTACT PHONE</Text>
+                                            <TextInput
+                                                value={emergencyContactPhone}
+                                                onChangeText={setEmergencyContactPhone}
+                                                placeholder="e.g. +1 555-0199"
+                                                placeholderTextColor="#CBD5E1"
+                                                keyboardType="phone-pad"
+                                                style={styles.textInput}
+                                            />
+                                        </View>
+                                    </View>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {/* Accordion 1: Basic Info */}
+                                <TouchableOpacity
+                                    onPress={() => setExpandedSection(expandedSection === 'basic' ? null : 'basic')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        backgroundColor: '#F8FAFC',
+                                        padding: 16,
+                                        borderRadius: 12,
+                                        borderWidth: 1,
+                                        borderColor: '#F1F5F9',
+                                        marginBottom: 10
+                                    }}
+                                >
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="person-outline" size={16} color="#003580" />
+                                        <Text style={{ fontFamily: 'Outfit-Bold', color: '#0F172A', marginLeft: 8, fontSize: 14 }}>Basic Info</Text>
+                                    </View>
+                                    <Ionicons name={expandedSection === 'basic' ? 'chevron-up' : 'chevron-down'} size={16} color="#94A3B8" />
+                                </TouchableOpacity>
+
+                                {expandedSection === 'basic' && (
+                                    <View style={{ paddingHorizontal: 4, paddingBottom: 16 }}>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>Full Name</Text>
+                                            <TextInput
+                                                value={passengerName}
+                                                onChangeText={setPassengerName}
+                                                placeholder="Enter full name"
+                                                placeholderTextColor="#CBD5E1"
+                                                style={styles.textInput}
+                                            />
+                                        </View>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>Phone Number</Text>
+                                            <TextInput
+                                                value={passengerPhone}
+                                                onChangeText={setPassengerPhone}
+                                                placeholder="Enter phone number"
+                                                placeholderTextColor="#CBD5E1"
+                                                keyboardType="phone-pad"
+                                                style={styles.textInput}
+                                            />
+                                        </View>
+                                    </View>
+                                )}
+
+                                {/* Accordion 2: Seat & Meal */}
+                                <TouchableOpacity
+                                    onPress={() => setExpandedSection(expandedSection === 'seatmeal' ? null : 'seatmeal')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        backgroundColor: '#F8FAFC',
+                                        padding: 16,
+                                        borderRadius: 12,
+                                        borderWidth: 1,
+                                        borderColor: '#F1F5F9',
+                                        marginBottom: 10
+                                    }}
+                                >
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="restaurant-outline" size={16} color="#003580" />
+                                        <Text style={{ fontFamily: 'Outfit-Bold', color: '#0F172A', marginLeft: 8, fontSize: 14 }}>Seat & Meal</Text>
+                                    </View>
+                                    <Ionicons name={expandedSection === 'seatmeal' ? 'chevron-up' : 'chevron-down'} size={16} color="#94A3B8" />
+                                </TouchableOpacity>
+
+                                {expandedSection === 'seatmeal' && (
+                                    <View style={{ paddingHorizontal: 4, paddingBottom: 16 }}>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>Seat Preference</Text>
+                                            <View style={styles.buttonGroup}>
+                                                {['Window', 'Aisle', 'Middle'].map((pref) => (
+                                                    <TouchableOpacity
+                                                        key={pref}
+                                                        onPress={() => setSeatPreference(pref)}
+                                                        style={[
+                                                            styles.optionButton,
+                                                            seatPreference === pref ? styles.optionButtonActive : null
+                                                        ]}
+                                                    >
+                                                        <Text style={[styles.optionText, seatPreference === pref ? styles.optionTextActive : null]}>
+                                                            {pref}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
+                                        </View>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>Meal Preference</Text>
+                                            <View style={styles.buttonGroup}>
+                                                {['Standard', 'Vegetarian', 'Vegan'].map((meal) => (
+                                                    <TouchableOpacity
+                                                        key={meal}
+                                                        onPress={() => setMealPreference(meal)}
+                                                        style={[
+                                                            styles.optionButton,
+                                                            mealPreference === meal ? styles.optionButtonActive : null
+                                                        ]}
+                                                    >
+                                                        <Text style={[styles.optionText, mealPreference === meal ? styles.optionTextActive : null]}>
+                                                            {meal}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
+                                        </View>
+                                    </View>
+                                )}
+
+                                {/* Accordion 3: Baggage & Extras */}
+                                <TouchableOpacity
+                                    onPress={() => setExpandedSection(expandedSection === 'baggage' ? null : 'baggage')}
+                                    style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        backgroundColor: '#F8FAFC',
+                                        padding: 16,
+                                        borderRadius: 12,
+                                        borderWidth: 1,
+                                        borderColor: '#F1F5F9',
+                                        marginBottom: 10
+                                    }}
+                                >
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="gift-outline" size={16} color="#003580" />
+                                        <Text style={{ fontFamily: 'Outfit-Bold', color: '#0F172A', marginLeft: 8, fontSize: 14 }}>Baggage & Extras</Text>
+                                    </View>
+                                    <Ionicons name={expandedSection === 'baggage' ? 'chevron-up' : 'chevron-down'} size={16} color="#94A3B8" />
+                                </TouchableOpacity>
+
+                                {expandedSection === 'baggage' && (
+                                    <View style={{ paddingHorizontal: 4, paddingBottom: 16 }}>
+                                        <View style={styles.inputGroup}>
+                                            <Text style={styles.inputLabel}>Baggage Select</Text>
+                                            <View style={styles.buttonGroup}>
+                                                {[0, 1, 2].map((num) => (
+                                                    <TouchableOpacity
+                                                        key={num}
+                                                        onPress={() => setLuggageCount(num)}
+                                                        style={[
+                                                            styles.optionButton,
+                                                            luggageCount === num ? styles.optionButtonActive : null
+                                                        ]}
+                                                    >
+                                                        <Text style={[styles.optionText, luggageCount === num ? styles.optionTextActive : null]}>
+                                                            {num === 0 ? 'Handbag' : `${num} Bag`}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
+                                        </View>
+                                        <View style={styles.switchRow}>
+                                            <View style={styles.switchTextContainer}>
+                                                <Text style={styles.switchTitle}>🛡 Premium Travel Insurance</Text>
+                                            </View>
+                                            <Switch
+                                                value={hasInsurance}
+                                                onValueChange={setHasInsurance}
+                                                trackColor={{ false: "#CBD5E1", true: "#003580" }}
+                                            />
+                                        </View>
+                                        <View style={styles.switchRow}>
+                                            <View style={styles.switchTextContainer}>
+                                                <Text style={styles.switchTitle}>♿ Special Assistance Needed</Text>
+                                            </View>
+                                            <Switch
+                                                value={specialAssistance}
+                                                onValueChange={setSpecialAssistance}
+                                                trackColor={{ false: "#CBD5E1", true: "#003580" }}
+                                            />
+                                        </View>
+
+                                        {specialAssistance && (
+                                            <View style={styles.conditionalContainer}>
+                                                <View style={styles.inputGroup}>
+                                                    <Text style={styles.inputLabel}>Condition Type</Text>
+                                                    <TextInput
+                                                        value={specialAssistanceType}
+                                                        onChangeText={setSpecialAssistanceType}
+                                                        placeholder="e.g. Wheelchair access"
+                                                        placeholderTextColor="#CBD5E1"
+                                                        style={styles.textInput}
+                                                    />
+                                                </View>
+                                                <View style={styles.inputGroup}>
+                                                    <Text style={styles.inputLabel}>Equipment Details</Text>
+                                                    <TextInput
+                                                        value={specialAssistanceEquipment}
+                                                        onChangeText={setSpecialAssistanceEquipment}
+                                                        placeholder="Equipment details"
+                                                        placeholderTextColor="#CBD5E1"
+                                                        style={styles.textInput}
+                                                    />
+                                                </View>
+                                            </View>
+                                        )}
+                                    </View>
+                                )}
+                            </>
                         )}
                     </ScrollView>
 

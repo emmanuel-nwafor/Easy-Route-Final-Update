@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import FilterTabs from "../components/FilterTabs";
+import { MotiView } from 'moti';
 import RouteCard from "../components/RouteCard";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { PlansService } from "../../shared/data/services/plans.service";
@@ -160,22 +161,50 @@ export default function AllRoutesSearchScreen() {
                     </View>
                 ) : routes.length > 0 ? (
                     routes.map((item, index) => (
-                        <RouteCard
-                            key={item.id}
-                            id={item.id}
-                            type={item.type as any}
-                            time={item.time}
-                            from={item.from}
-                            to={item.to}
-                            operator={item.operator}
-                            price={item.price}
-                            isRecommended={item.recommended}
-                            statusText={item.reliability || item.warning || item.duration}
-                            statusType={item.reliability ? 'success' : item.warning ? 'warning' : 'neutral'}
-                            delay={index * 150}
-                            onSelect={() => handleSelectRoute(item)}
-                            onViewMap={() => handleViewMap(item)}
-                        />
+                        APP_VARIANT === 'advanced' ? (
+                            <RouteCard
+                                key={item.id || index}
+                                id={item.id}
+                                type={item.type as any}
+                                time={item.time}
+                                from={item.from}
+                                to={item.to}
+                                operator={item.operator}
+                                price={item.price}
+                                isRecommended={item.recommended}
+                                statusText={item.reliability || item.warning || item.duration}
+                                statusType={item.reliability ? 'success' : item.warning ? 'warning' : 'neutral'}
+                                delay={index * 150}
+                                onSelect={() => handleSelectRoute(item)}
+                                onViewMap={() => handleViewMap(item)}
+                            />
+                        ) : (
+                            <MotiView
+                                key={item.id || index}
+                                from={{ opacity: 0, translateY: 10 }}
+                                animate={{ opacity: 1, translateY: 0 }}
+                                className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm shadow-slate-200 mb-4"
+                            >
+                                <View className="mb-4">
+                                    <Text className="font-[Outfit-Bold] text-2xl text-slate-900 mb-1">
+                                        {item.departureTime || item.time || '18:41'} ➔ {item.arrivalTime || '22:15'}
+                                    </Text>
+                                    <Text className="font-[Outfit-Bold] text-slate-800 text-sm mb-2">
+                                        {translateAirportCode(item.from)} ➔ {translateAirportCode(item.to)}
+                                    </Text>
+                                    <Text className="font-[Outfit-Medium] text-slate-400 text-xs">
+                                        Duration: {item.duration || '5h 34m'}
+                                    </Text>
+                                </View>
+
+                                <TouchableOpacity
+                                    onPress={() => handleSelectRoute(item)}
+                                    className="bg-[#003580] py-3.5 rounded-2xl items-center justify-center"
+                                >
+                                    <Text className="text-white font-[Outfit-Bold] text-sm">View Details</Text>
+                                </TouchableOpacity>
+                            </MotiView>
+                        )
                     ))
                 ) : (
                     <View className="flex-1 items-center justify-center p-10">
@@ -189,7 +218,7 @@ export default function AllRoutesSearchScreen() {
 
             </ScrollView>
 
-            <View className="absolute bottom-10 w-full px-4 bg-[#F8FAFC]/80 p-3">
+            <View className="absolute bottom-10 w-full px-4 bg-transparent p-3">
                 {/* Footer Action */}
                 <TouchableOpacity
                     onPress={() => router.push({
@@ -200,10 +229,25 @@ export default function AllRoutesSearchScreen() {
                             routes: JSON.stringify(routes)
                         }
                     })}
-                    className="mt-2 py-4 bg-white rounded-2xl items-center flex-row justify-center border border-slate-200 shadow-sm"
+                    style={{
+                        borderColor: APP_VARIANT === 'advanced' ? '#E2E8F0' : '#003580',
+                    }}
+                    className="mt-2 py-4 bg-white rounded-2xl items-center flex-row justify-center border shadow-sm"
                 >
-                    <MaterialCommunityIcons name="compare" size={20} color="#475569" />
-                    <Text style={{ fontSize: wp(3.8) }} className="text-slate-600 font-[Outfit-Bold] ml-2">All Routes</Text>
+                    <MaterialCommunityIcons 
+                        name={APP_VARIANT === 'advanced' ? "compare" : "apps"} 
+                        size={20} 
+                        color={APP_VARIANT === 'advanced' ? "#475569" : "#003580"} 
+                    />
+                    <Text 
+                        style={{ 
+                            fontSize: wp(3.8), 
+                            color: APP_VARIANT === 'advanced' ? "#475569" : "#003580" 
+                        }} 
+                        className="font-[Outfit-Bold] ml-2"
+                    >
+                        All Routes
+                    </Text>
                 </TouchableOpacity>
             </View>
 
